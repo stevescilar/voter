@@ -14,8 +14,11 @@ class IndexView(generic.ListView):
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
-        """ Return the last five published questions"""
-        return Question.objects.order_by('-pub_date')[:5]
+        
+        return Question.objects.filter(
+        pub_date_lte = timezone.now()
+        ).order_by('pub_date_lte')[:5]
+
 
 #detailview
 class DetailView(generic.DetailView):
@@ -50,8 +53,7 @@ def vote(request, question_id):
     except (KeyError, Choice.DoesNotExist):
       
         return render(request, 'polls/detail.html',{
-            'question': question,
-            'error_message': "You didn't select a choice.",
+            'question': question, 'error_message': "You didn't select a choice.",
         })
     else:
         selected_choice.votes = F('votes') + 1 
